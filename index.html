@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مسجد مالیاتی نظام</title>
+    <style>
+        /* --- بنیادی اسٹائل --- */
+        :root {
+            --paper-bg: #fdfaf0; /* کاغذ کا رنگ */
+            --ink-color: #333; /* سیاہی کا رنگ */
+            --border-color: #b0a090; /* بارڈر کا رنگ */
+            --input-underline: #888; /* ان پٹ لائن کا رنگ */
+            --button-bg: #e0d8cd; /* بٹن کا رنگ */
+            --button-hover-bg: #d0c8bd; /* بٹن ہوور رنگ */
+            --danger-bg: #f8d7da; /* خطرے کا رنگ */
+            --danger-text: #721c24; /* خطرے کا متن */
+            --success-bg: #d4edda; /* کامیابی کا رنگ */
+            --success-text: #155724; /* کامیابی کا متن */
+        }
+
+        body {
+            font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Pak Nastaleeq', 'Urdu Typesetting', Tahoma, sans-serif;
+            background-color: #f0f0f0; /* ہلکا خاکستری پس منظر */
+            color: var(--ink-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.8; /* بہتر پڑھنے کے لئے */
+            font-size: 16px; /* بنیادی فونٹ سائز */
+            direction: rtl; /* دائیں سے بائیں سمت */
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: var(--paper-bg);
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 5px; /* ہلکے گول کونے */
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            color: var(--ink-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* --- نیویگیشن/ٹیبز --- */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap; /* موبائل کے لئے */
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .tab-button {
+            padding: 10px 15px;
+            cursor: pointer;
+            background-color: var(--button-bg);
+            border: 1px solid var(--border-color);
+            border-bottom: none; /* نیچے کا بارڈر نہیں */
+            margin: 0 3px 5px 3px; /* موبائل پر نیچے مارجن */
+            border-radius: 5px 5px 0 0; /* اوپر کے کونے گول */
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            font-family: inherit; /* فونٹ وراثت میں ملے */
+            font-size: 1em;
+        }
+
+        .tab-button:hover, .tab-button.active {
+            background-color: var(--paper-bg); /* فعال ٹیب کا رنگ کاغذ جیسا */
+            border-bottom: 1px solid var(--paper-bg); /* نیچے کا بارڈر چھپائیں */
+            position: relative;
+            top: 1px;
+        }
+
+        .tab-content {
+            display: none; /* پہلے تمام مواد چھپائیں */
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-top: none; /* اوپر کا بارڈر نہیں */
+            border-radius: 0 0 5px 5px; /* نیچے کے کونے گول */
+            background-color: var(--paper-bg);
+            min-height: 300px; /* کم از کم اونچائی */
+        }
+
+        .tab-content.active {
+            display: block; /* فعال مواد دکھائیں */
+        }
+
+        /* --- فارم اسٹائل --- */
+        .form-section {
+            background-color: #fffef9; /* ہلکا سفید پس منظر */
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px dashed var(--border-color); /* ڈیشڈ بارڈر */
+            border-radius: 4px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* ریسپانسیو گرڈ */
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--ink-color);
+            font-size: 0.95em;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select,
+        textarea {
+            padding: 8px 10px;
+            border: none;
+            border-bottom: 1px solid var(--input-underline); /* نیچے لائن والا ان پٹ */
+            background-color: transparent; /* شفاف پس منظر */
+            font-family: inherit; /* فونٹ وراثت میں ملے */
+            font-size: 1em;
+            width: 100%;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-bottom-color: var(--ink-color); /* فوکس پر لائن گہری */
+        }
+
+        textarea {
+            min-height: 60px;
+            resize: vertical; /* صرف عمودی ری سائز */
+            border: 1px solid var(--input-underline); /* ٹیکسٹ ایریا کے لئے پورا بارڈر */
+        }
+
+        /* --- بٹن اسٹائل --- */
+        .button {
+            padding: 10px 20px;
+            background-color: var(--button-bg);
+            color: var(--ink-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1em;
+            font-weight: bold;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            margin: 5px;
+        }
+        .button:hover {
+            background-color: var(--button-hover-bg);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .button-primary {
+            background-color: #a09080; /* بنیادی بٹن کا رنگ تھوڑا گہرا */
+            color: white;
+        }
+        .button-primary:hover {
+            background-color: #8a7a6a;
+        }
+        .button-danger {
+            background-color: var(--danger-bg);
+            color: var(--danger-text);
+            border-color: #f5c6cb;
+        }
+        .button-danger:hover {
+            background-color: #f1b0b7;
+        }
+
+        /* --- ٹیبل اسٹائل --- */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 0.9em; /* ٹیبل میں تھوڑا چھوٹا فونٹ */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .data-table th, .data-table td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: right; /* اردو کے لئے دائیں الائن */
+        }
+        .data-table th {
+            background-color: var(--button-bg); /* ہیڈر کا رنگ */
+            font-weight: bold;
+        }
+        .data-table tr:nth-child(even) {
+            background-color: #f8f5f0; /* ہلکا رنگ ہر دوسری قطار کے لئے */
+        }
+        .data-table tr:hover {
+            background-color: #efeae0; /* ہوور پر رنگ */
+        }
+        .action-buttons button {
+            padding: 4px 8px;
+            font-size: 0.85em;
+            margin: 0 2px;
+        }
+
+        /* --- فلٹر سیکشن --- */
+        .filter-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #fffef9;
+            border: 1px dashed var(--border-color);
+            border-radius: 4px;
+            flex-wrap: wrap; /* موبائل کے لئے */
+        }
+        .filter-section label {
+            margin-bottom: 0;
+            margin-left: 5px; /* لیبل اور ان پٹ کے درمیان فاصلہ */
+        }
+        .filter-group {
+           display: flex;
+           align-items: center;
+        }
+
+        /* --- پیغام رسانی --- */
+        .message {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .message-success {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+            border: 1px solid #c3e6cb;
+        }
+        .message-error {
+            background-color: var(--danger-bg);
+            color: var(--danger-text);
+            border: 1px solid #f5c6cb;
+        }
+
+        /* --- رپورٹ سیکشن --- */
+        #report-output {
+            border: 2px solid var(--ink-color);
+            padding: 25px;
+            margin-top: 20px;
+            background-color: #fff; /* رپورٹ کے لئے سفید پس منظر */
+            line-height: 2; /* رپورٹ میں زیادہ لائن اسپیسنگ */
+        }
+        #report-output h3 {
+            border-bottom: 1px solid var(--ink-color);
+            text-align: center;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        #report-output table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        #report-output th, #report-output td {
+            border: 1px solid #ccc; /* رپورٹ میں ہلکے بارڈر */
+            padding: 8px;
+            text-align: right;
+        }
+        #report-output th {
+            background-color: #f2f2f2; /* رپورٹ ہیڈر کا رنگ */
+        }
+        .report-summary {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 2px solid var(--ink-color);
+            font-weight: bold;
+        }
+        .report-summary p {
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* --- بیک اپ/ریسٹور --- */
+        .backup-restore-section {
+             text-align: center;
+             padding: 20px;
+             margin-top: 20px;
+             background-color: #fffef9;
+             border: 1px dashed var(--border-color);
+             border-radius: 4px;
+        }
+        .backup-restore-section input[type="file"] {
+            border: 1px solid var(--input-underline);
+            padding: 5px;
+            margin: 0 10px;
+        }
+
+        /* --- ریسپانسیو ڈیزائن --- */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            .tabs {
+                justify-content: space-around; /* ٹیبز کو بہتر پھیلائیں */
+            }
+            .tab-button {
+                padding: 8px 10px;
+                font-size: 0.9em;
+            }
+            .form-grid {
+                grid-template-columns: 1fr; /* موبائل پر ایک کالم */
+            }
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-group {
+                margin-bottom: 10px;
+                justify-content: space-between;
+            }
+            .data-table th, .data-table td {
+                padding: 8px 5px; /* موبائل پر کم پیڈنگ */
+                font-size: 0.85em; /* موبائل پر چھوٹا فونٹ */
+            }
+            .action-buttons button {
+                padding: 5px;
+                font-size: 0.8em;
+            }
+            h1 { font-size: 1.8em; }
+            h2 { font-size: 1.5em; }
+        }
+
+        /* --- پرنٹ اسٹائل --- */
+        @media print {
+            body {
+                background-color: #fff;
+                font-size: 12pt; /* پرنٹ کے لئے مناسب سائز */
+                color: #000;
+                font-family: 'Times New Roman', serif; /* پرنٹ کے لئے سیریف فونٹ */
+            }
+            .container {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                border: none;
+                box-shadow: none;
+            }
+            .tabs, .tab-button, .form-section, .filter-section, .backup-restore-section, .action-buttons, #add-edit-forms, #settings-tab, #dashboard-tab, #utility-bills-tab, #monthly-expenses-tab, #donations-tab, #message-area, .print-hide {
+                display: none !important; /* پرنٹ میں غیر ضروری عناصر چھپائیں */
+            }
+            #reports-tab, #report-output {
+                display: block !important; /* صرف رپورٹ سیکشن دکھائیں */
+                width: 100%;
+                border: none;
+                padding: 0;
+                margin: 0;
+                box-shadow: none;
+                background-color: #fff;
+            }
+            #report-output h3 {
+                text-align: center;
+                font-size: 16pt;
+                margin-bottom: 30px;
+            }
+             #report-output table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 15px; /* پرنٹ میں کم مارجن */
+                font-size: 11pt;
+            }
+            #report-output th, #report-output td {
+                border: 1px solid #666; /* پرنٹ میں واضح بارڈر */
+                padding: 6px;
+                text-align: right;
+            }
+            #report-output th {
+                background-color: #eee;
+            }
+            .report-summary {
+                margin-top: 20px;
+                padding-top: 10px;
+                border-top: 2px solid #000;
+                font-size: 12pt;
+            }
+             /* A4 پیج بریک یقینی بنائیں */
+            @page {
+                size: A4;
+                margin: 1.5cm; /* پرنٹ مارجن */
+            }
+            /* یقینی بنائیں کہ ٹیبل قطاریں نہ ٹوٹیں */
+            tr { page-break-inside: avoid; }
+            thead { display: table-header-group; } /* ہر صفحے پر ہیڈر */
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>مسجد انتظامیہ - مالیاتی ریکارڈ</h1>
+
+        <div id="message-area"></div>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'dashboard-tab')">ڈیش بورڈ</button>
+            <button class="tab-button" onclick="openTab(event, 'utility-bills-tab')">یوٹیلیٹی بل</button>
+            <button class="tab-button" onclick="openTab(event, 'monthly-expenses-tab')">ماہانہ اخراجات</button>
+            <button class="tab-button" onclick="openTab(event, 'donations-tab')">عطیات</button>
+            <button class="tab-button" onclick="openTab(event, 'reports-tab')">رپورٹس</button>
+            <button class="tab-button" onclick="openTab(event, 'settings-tab')">سیٹنگز</button>
+        </div>
+
+        <div id="dashboard-tab" class="tab-content active">
+            <h2>ڈیش بورڈ - خلاصہ</h2>
+            <div id="dashboard-summary">
+                <p>لوڈ ہو رہا ہے...</p>
+                </div>
+            <h3>فوری اندراج</h3>
+             <button class="button" onclick="quickAdd('utility-bills-tab')">نیا بل شامل کریں</button>
+             <button class="button" onclick="quickAdd('monthly-expenses-tab')">نیا خرچہ شامل کریں</button>
+             <button class="button" onclick="quickAdd('donations-tab')">نیا عطیہ شامل کریں</button>
+        </div>
+
+        <div id="add-edit-forms" style="display: none;">
+
+            <div id="utility-bill-form-section" class="form-section" style="display: none;">
+                <h3 id="utility-bill-form-title">نیا یوٹیلیٹی بل شامل کریں</h3>
+                <form id="utility-bill-form">
+                    <input type="hidden" id="utility-bill-id">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="utility-bill-type">بل کی قسم:</label>
+                            <select id="utility-bill-type" required>
+                                <option value="بجلی">بجلی (Bijli)</option>
+                                <option value="گیس">گیس (Gas)</option>
+                                <option value="پانی">پانی (Pani)</option>
+                                <option value="دیگر">دیگر</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="utility-bill-date">بل کی تاریخ:</label>
+                            <input type="date" id="utility-bill-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="utility-bill-due-date">ادا کرنے کی آخری تاریخ:</label>
+                            <input type="date" id="utility-bill-due-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="utility-bill-amount">رقم (روپے):</label>
+                            <input type="number" id="utility-bill-amount" required min="0" step="any">
+                        </div>
+                        <div class="form-group">
+                            <label for="utility-bill-meter-reading">میٹر ریڈنگ (اگر ہو):</label>
+                            <input type="text" id="utility-bill-meter-reading">
+                        </div>
+                         <div class="form-group">
+                            <label for="utility-bill-status">حالت:</label>
+                            <select id="utility-bill-status" required>
+                                <option value="ادا نہیں ہوا">ادا نہیں ہوا</option>
+                                <option value="ادا ہو گیا">ادا ہو گیا</option>
+                            </select>
+                        </div>
+                    </div>
+                     <div class="form-group">
+                        <label for="utility-bill-notes">نوٹس:</label>
+                        <textarea id="utility-bill-notes"></textarea>
+                    </div>
+                    <button type="submit" class="button button-primary">محفوظ کریں</button>
+                    <button type="button" class="button" onclick="hideForms()">منسوخ کریں</button>
+                </form>
+            </div>
+
+            <div id="monthly-expense-form-section" class="form-section" style="display: none;">
+                <h3 id="monthly-expense-form-title">نیا ماہانہ خرچہ شامل کریں</h3>
+                <form id="monthly-expense-form">
+                    <input type="hidden" id="monthly-expense-id">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="monthly-expense-category">قسم:</label>
+                            <select id="monthly-expense-category" required>
+                                <option value="امام صاحب تنخواہ">امام صاحب تنخواہ</option>
+                                <option value="موذن تنخواہ">موذن تنخواہ</option>
+                                <option value="خادم/سویپر تنخواہ">خادم/سویپر تنخواہ</option>
+                                <option value="صفائی کا سامان">صفائی کا سامان</option>
+                                <option value="مرمت و دیکھ بھال">مرمت و دیکھ بھال</option>
+                                <option value="لنگر/افطاری">لنگر/افطاری</option>
+                                <option value="اسٹیشنری">اسٹیشنری</option>
+                                <option value="دیگر اخراجات">دیگر اخراجات</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="monthly-expense-date">تاریخ:</label>
+                            <input type="date" id="monthly-expense-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="monthly-expense-amount">رقم (روپے):</label>
+                            <input type="number" id="monthly-expense-amount" required min="0" step="any">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="monthly-expense-description">تفصیل:</label>
+                        <textarea id="monthly-expense-description" required></textarea>
+                    </div>
+                    <button type="submit" class="button button-primary">محفوظ کریں</button>
+                    <button type="button" class="button" onclick="hideForms()">منسوخ کریں</button>
+                </form>
+            </div>
+
+            <div id="donation-form-section" class="form-section" style="display: none;">
+                <h3 id="donation-form-title">نیا عطیہ شامل کریں</h3>
+                <form id="donation-form">
+                    <input type="hidden" id="donation-id">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="donation-type">عطیہ کی قسم:</label>
+                            <select id="donation-type" required>
+                                <option value="نقد">نقد (Cash)</option>
+                                <option value="بینک">بینک (Bank)</option>
+                                <option value="فطرانہ">فطرانہ</option>
+                                <option value="زکوٰۃ">زکوٰۃ</option>
+                                <option value="صدقہ">صدقہ</option>
+                                <option value="تعمیراتی فنڈ">تعمیراتی فنڈ</option>
+                                <option value="دیگر">دیگر</option>
+                            </select>
+                        </div>
+                         <div class="form-group">
+                            <label for="donation-date">تاریخ:</label>
+                            <input type="date" id="donation-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="donation-amount">رقم (روپے):</label>
+                            <input type="number" id="donation-amount" required min="0" step="any">
+                        </div>
+                        <div class="form-group">
+                            <label for="donation-donor-name">عطیہ دہندہ کا نام (اختیاری):</label>
+                            <input type="text" id="donation-donor-name">
+                        </div>
+                         <div class="form-group">
+                            <label for="donation-receipt-no">رسید نمبر (اختیاری):</label>
+                            <input type="text" id="donation-receipt-no">
+                        </div>
+                    </div>
+                     <div class="form-group">
+                        <label for="donation-notes">نوٹس:</label>
+                        <textarea id="donation-notes"></textarea>
+                    </div>
+                    <button type="submit" class="button button-primary">محفوظ کریں</button>
+                    <button type="button" class="button" onclick="hideForms()">منسوخ کریں</button>
+                </form>
+            </div>
+        </div>
+
+
+        <div id="utility-bills-tab" class="tab-content">
+            <h2>یوٹیلیٹی بل</h2>
+             <button class="button button-primary" onclick="showAddForm('utility-bill')">نیا بل شامل کریں</button>
+             <div class="filter-section">
+                 <div class="filter-group">
+                    <label for="filter-bill-month">مہینہ:</label>
+                    <input type="month" id="filter-bill-month" onchange="loadUtilityBills()">
+                 </div>
+                 <div class="filter-group">
+                    <label for="filter-bill-type">قسم:</label>
+                    <select id="filter-bill-type" onchange="loadUtilityBills()">
+                        <option value="">تمام</option>
+                        <option value="بجلی">بجلی</option>
+                        <option value="گیس">گیس</option>
+                        <option value="پانی">پانی</option>
+                        <option value="دیگر">دیگر</option>
+                    </select>
+                 </div>
+                 <div class="filter-group">
+                    <label for="filter-bill-status">حالت:</label>
+                    <select id="filter-bill-status" onchange="loadUtilityBills()">
+                        <option value="">تمام</option>
+                        <option value="ادا نہیں ہوا">ادا نہیں ہوا</option>
+                        <option value="ادا ہو گیا">ادا ہو گیا</option>
+                    </select>
+                 </div>
+                 <button class="button" onclick="resetFilters('utility-bills-tab'); loadUtilityBills();">فلٹر صاف کریں</button>
+            </div>
+            <div id="utility-bills-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>تاریخ</th>
+                            <th>قسم</th>
+                            <th>رقم (روپے)</th>
+                            <th>آخری تاریخ</th>
+                            <th>میٹر ریڈنگ</th>
+                            <th>حالت</th>
+                            <th>نوٹس</th>
+                            <th class="print-hide">اعمال</th>
+                        </tr>
+                    </thead>
+                    <tbody id="utility-bills-tbody">
+                        </tbody>
+                     <tfoot>
+                        <tr>
+                            <td colspan="2"><b>کل رقم:</b></td>
+                            <td id="utility-bills-total">0.00</td>
+                            <td colspan="5"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <div id="monthly-expenses-tab" class="tab-content">
+            <h2>ماہانہ اخراجات</h2>
+             <button class="button button-primary" onclick="showAddForm('monthly-expense')">نیا خرچہ شامل کریں</button>
+            <div class="filter-section">
+                 <div class="filter-group">
+                    <label for="filter-expense-month">مہینہ:</label>
+                    <input type="month" id="filter-expense-month" onchange="loadMonthlyExpenses()">
+                 </div>
+                 <div class="filter-group">
+                    <label for="filter-expense-category">قسم:</label>
+                    <select id="filter-expense-category" onchange="loadMonthlyExpenses()">
+                        <option value="">تمام</option>
+                        <option value="امام صاحب تنخواہ">امام صاحب تنخواہ</option>
+                        <option value="موذن تنخواہ">موذن تنخواہ</option>
+                        <option value="خادم/سویپر تنخواہ">خادم/سویپر تنخواہ</option>
+                        <option value="صفائی کا سامان">صفائی کا سامان</option>
+                        <option value="مرمت و دیکھ بھال">مرمت و دیکھ بھال</option>
+                        <option value="لنگر/افطاری">لنگر/افطاری</option>
+                        <option value="اسٹیشنری">اسٹیشنری</option>
+                        <option value="دیگر اخراجات">دیگر اخراجات</option>
+                    </select>
+                 </div>
+                  <button class="button" onclick="resetFilters('monthly-expenses-tab'); loadMonthlyExpenses();">فلٹر صاف کریں</button>
+            </div>
+            <div id="monthly-expenses-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>تاریخ</th>
+                            <th>قسم</th>
+                            <th>تفصیل</th>
+                            <th>رقم (روپے)</th>
+                            <th class="print-hide">اعمال</th>
+                        </tr>
+                    </thead>
+                    <tbody id="monthly-expenses-tbody">
+                        </tbody>
+                     <tfoot>
+                        <tr>
+                            <td colspan="3"><b>کل رقم:</b></td>
+                            <td id="monthly-expenses-total">0.00</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <div id="donations-tab" class="tab-content">
+            <h2>عطیات</h2>
+             <button class="button button-primary" onclick="showAddForm('donation')">نیا عطیہ شامل کریں</button>
+            <div class="filter-section">
+                 <div class="filter-group">
+                    <label for="filter-donation-month">مہینہ:</label>
+                    <input type="month" id="filter-donation-month" onchange="loadDonations()">
+                 </div>
+                 <div class="filter-group">
+                    <label for="filter-donation-type">قسم:</label>
+                    <select id="filter-donation-type" onchange="loadDonations()">
+                        <option value="">تمام</option>
+                        <option value="نقد">نقد</option>
+                        <option value="بینک">بینک</option>
+                        <option value="فطرانہ">فطرانہ</option>
+                        <option value="زکوٰۃ">زکوٰۃ</option>
+                        <option value="صدقہ">صدقہ</option>
+                        <option value="تعمیراتی فنڈ">تعمیراتی فنڈ</option>
+                        <option value="دیگر">دیگر</option>
+                    </select>
+                 </div>
+                 <div class="filter-group">
+                     <label for="filter-donation-donor">عطیہ دہندہ:</label>
+                     <input type="text" id="filter-donation-donor" oninput="loadDonations()" placeholder="نام سے تلاش کریں">
+                 </div>
+                  <button class="button" onclick="resetFilters('donations-tab'); loadDonations();">فلٹر صاف کریں</button>
+            </div>
+            <div id="donations-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>تاریخ</th>
+                            <th>قسم</th>
+                            <th>رقم (روپے)</th>
+                            <th>عطیہ دہندہ</th>
+                            <th>رسید نمبر</th>
+                            <th>نوٹس</th>
+                            <th class="print-hide">اعمال</th>
+                        </tr>
+                    </thead>
+                    <tbody id="donations-tbody">
+                        </tbody>
+                     <tfoot>
+                        <tr>
+                            <td colspan="2"><b>کل رقم:</b></td>
+                            <td id="donations-total">0.00</td>
+                            <td colspan="4"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <div id="reports-tab" class="tab-content">
+            <h2>ماہانہ رپورٹ</h2>
+            <div class="filter-section">
+                 <div class="filter-group">
+                    <label for="report-month">مہینہ منتخب کریں:</label>
+                    <input type="month" id="report-month" required>
+                 </div>
+                 <button class="button button-primary" onclick="generateReport()">رپورٹ بنائیں</button>
+                 <button class="button print-hide" onclick="printReport()">رپورٹ پرنٹ کریں</button>
+            </div>
+
+            <div id="report-output">
+                <p style="text-align: center;">براہ کرم رپورٹ بنانے کے لئے مہینہ منتخب کریں۔</p>
+            </div>
+        </div>
+
+        <div id="settings-tab" class="tab-content">
+            <h2>سیٹنگز اور بیک اپ</h2>
+            <div class="backup-restore-section">
+                <h3>ڈیٹا بیک اپ</h3>
+                <p>اپنے تمام مالیاتی ریکارڈ کا بیک اپ بنانے کے لئے نیچے بٹن دبائیں۔ ایک JSON فائل ڈاؤنلوڈ ہوگی۔</p>
+                <button class="button" onclick="backupData()">بیک اپ بنائیں</button>
+            </div>
+             <div class="backup-restore-section">
+                <h3>ڈیٹا ری اسٹور</h3>
+                <p>پچھلے بیک اپ سے ڈیٹا بحال کرنے کے لئے JSON فائل منتخب کریں اور ری اسٹور بٹن دبائیں۔ <strong style="color: red;">موجودہ تمام ڈیٹا حذف ہو جائے گا۔</strong></p>
+                <input type="file" id="restore-file-input" accept=".json">
+                <button class="button button-danger" onclick="restoreData()">ڈیٹا ری اسٹور کریں</button>
+            </div>
+             <div class="backup-restore-section">
+                <h3>تمام ڈیٹا حذف کریں</h3>
+                <p><strong style="color: red;">انتباہ:</strong> یہ عمل ناقابل واپسی ہے۔ تمام مالیاتی ریکارڈ مستقل طور پر حذف ہو جائیں گے۔</p>
+                <button class="button button-danger" onclick="deleteAllData()">تمام ڈیٹا حذف کریں</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- IndexedDB سیٹ اپ ---
+        const DB_NAME = 'MasjidFinanceDB';
+        const DB_VERSION = 1;
+        const STORES = {
+            utilityBills: 'utilityBills',
+            monthlyExpenses: 'monthlyExpenses',
+            donations: 'donations'
+        };
+        let db;
+
+        function openDatabase() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+                request.onerror = (event) => {
+                    console.error("Database error:", event.target.errorCode);
+                    showMessage("ڈیٹا بیس کھولنے میں خرابی!", "error");
+                    reject("Database error: " + event.target.errorCode);
+                };
+
+                request.onsuccess = (event) => {
+                    db = event.target.result;
+                    console.log("Database opened successfully");
+                    resolve(db);
+                };
+
+                request.onupgradeneeded = (event) => {
+                    db = event.target.result;
+                    console.log("Upgrading database...");
+
+                    // Utility Bills Store
+                    if (!db.objectStoreNames.contains(STORES.utilityBills)) {
+                        const billStore = db.createObjectStore(STORES.utilityBills, { keyPath: 'id', autoIncrement: true });
+                        billStore.createIndex('date', 'date', { unique: false });
+                        billStore.createIndex('type', 'type', { unique: false });
+                        billStore.createIndex('status', 'status', { unique: false });
+                        billStore.createIndex('monthYear', 'monthYear', { unique: false }); // YYYY-MM انڈیکس
+                        console.log("Utility Bills store created");
+                    }
+
+                    // Monthly Expenses Store
+                    if (!db.objectStoreNames.contains(STORES.monthlyExpenses)) {
+                        const expenseStore = db.createObjectStore(STORES.monthlyExpenses, { keyPath: 'id', autoIncrement: true });
+                        expenseStore.createIndex('date', 'date', { unique: false });
+                        expenseStore.createIndex('category', 'category', { unique: false });
+                        expenseStore.createIndex('monthYear', 'monthYear', { unique: false }); // YYYY-MM انڈیکس
+                        console.log("Monthly Expenses store created");
+                    }
+
+                    // Donations Store
+                    if (!db.objectStoreNames.contains(STORES.donations)) {
+                        const donationStore = db.createObjectStore(STORES.donations, { keyPath: 'id', autoIncrement: true });
+                        donationStore.createIndex('date', 'date', { unique: false });
+                        donationStore.createIndex('type', 'type', { unique: false });
+                        donationStore.createIndex('donorName', 'donorName', { unique: false });
+                        donationStore.createIndex('monthYear', 'monthYear', { unique: false }); // YYYY-MM انڈیکس
+                        console.log("Donations store created");
+                    }
+                };
+            });
+        }
+
+        // --- CRUD فنکشنز ---
+        function addRecord(storeName, record) {
+            return new Promise((resolve, reject) => {
+                if (!db) { reject("Database not open"); return; }
+                // تاریخ سے YYYY-MM نکالیں
+                if (record.date) {
+                    record.monthYear = record.date.substring(0, 7); // YYYY-MM
+                }
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.add(record);
+
+                request.onsuccess = (event) => resolve(event.target.result); // Returns the new key
+                request.onerror = (event) => reject("Error adding record: " + event.target.errorCode);
+            });
+        }
+
+        function getRecord(storeName, id) {
+            return new Promise((resolve, reject) => {
+                if (!db) { reject("Database not open"); return; }
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                const request = store.get(id);
+
+                request.onsuccess = (event) => resolve(event.target.result);
+                request.onerror = (event) => reject("Error getting record: " + event.target.errorCode);
+            });
+        }
+
+        function getAllRecords(storeName, indexName = null, filterValue = null) {
+            return new Promise((resolve, reject) => {
+                if (!db) { reject("Database not open"); return; }
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                let request;
+
+                if (indexName && filterValue !== null && filterValue !== undefined && filterValue !== '') {
+                    const index = store.index(indexName);
+                    // اگر فلٹر ویلیو monthYear ہے تو صرف اسی مہینے کا ڈیٹا لیں
+                    if (indexName === 'monthYear') {
+                        request = index.getAll(IDBKeyRange.only(filterValue));
+                    } else {
+                         // دیگر انڈیکس کے لئے getAll استعمال کریں (یہ جزوی میچ نہیں کرے گا)
+                         // اگر جزوی میچ کی ضرورت ہو تو cursor استعمال کرنا ہوگا
+                        request = index.getAll(filterValue);
+                    }
+                } else {
+                    request = store.getAll(); // Get all records if no filter
+                }
+
+                request.onsuccess = (event) => resolve(event.target.result);
+                request.onerror = (event) => reject(`Error getting all records from ${storeName}: ${event.target.errorCode}`);
+            });
+        }
+
+        // مخصوص فلٹرز کے ساتھ ریکارڈ حاصل کرنے کا فنکشن (زیادہ لچکدار)
+        function getFilteredRecords(storeName, filters) {
+             return new Promise((resolve, reject) => {
+                if (!db) { reject("Database not open"); return; }
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                const results = [];
+                const request = store.openCursor();
+
+                request.onsuccess = (event) => {
+                    const cursor = event.target.result;
+                    if (cursor) {
+                        const record = cursor.value;
+                        let match = true;
+                        // تمام فلٹرز چیک کریں
+                        for (const key in filters) {
+                            if (filters[key] && record[key] !== filters[key]) {
+                                // اگر monthYear فلٹر ہے تو YYYY-MM چیک کریں
+                                if (key === 'monthYear' && record.date.substring(0, 7) !== filters[key]) {
+                                    match = false;
+                                    break;
+                                } else if (key !== 'monthYear' && key !== 'donorName') {
+                                     match = false;
+                                     break;
+                                }
+                                // عطیہ دہندہ کے نام کے لئے جزوی میچ
+                                if (key === 'donorName' && filters[key]) {
+                                    if (!record.donorName || !record.donorName.toLowerCase().includes(filters[key].toLowerCase())) {
+                                         match = false;
+                                         break;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (match) {
+                            results.push(record);
+                        }
+                        cursor.continue();
+                    } else {
+                        // کرسر ختم، نتائج بھیجیں
+                        resolve(results);
+                    }
+                };
+                request.onerror = (event) => reject(`Error filtering records from ${storeName}: ${event.target.errorCode}`);
+            });
+        }
+
+
+        function updateRecord(storeName, record) {
+            return new Promise((resolve, reject) => {
+                if (!db) { reject("Database not open"); return; }
+                 // تاریخ سے YYYY-MM نکالیں
+                if (record.date) {
+                    record.monthYear = record.date.substring(0, 7); // YYYY-MM
+                }
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.put(record); // Use put for update (or insert if not exists)
+
+                request.onsuccess = (event) => resolve(event.target.result); // Returns the key
+                request.onerror = (event) => reject("Error updating record: " + event.target.errorCode);
+            });
+        }
+
+        function deleteRecord(storeName, id) {
+            return new Promise((resolve, reject) => {
+                if (!db) { reject("Database not open"); return; }
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.delete(id);
+
+                request.onsuccess = () => resolve();
+                request.onerror = (event) => reject("Error deleting record: " + event.target.errorCode);
+            });
+        }
+
+        // --- UI فنکشنز ---
+        function openTab(event, tabId) {
+            // تمام ٹیب مواد چھپائیں
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(tc => tc.classList.remove('active'));
+
+            // تمام ٹیب بٹن سے 'active' کلاس ہٹائیں
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(tb => tb.classList.remove('active'));
+
+            // منتخب ٹیب مواد دکھائیں اور بٹن کو فعال کریں
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+
+            // فارم چھپائیں جب ٹیب تبدیل ہو
+            hideForms();
+
+            // اگر نیا ٹیب ڈیش بورڈ ہے تو خلاصہ لوڈ کریں
+            if (tabId === 'dashboard-tab') {
+                loadDashboardSummary();
+            }
+            // اگر نیا ٹیب رپورٹس ہے تو مہینے کا ان پٹ سیٹ کریں
+            if (tabId === 'reports-tab') {
+                const reportMonthInput = document.getElementById('report-month');
+                if (!reportMonthInput.value) {
+                    const today = new Date();
+                    // پچھلا مہینہ ڈیفالٹ کے طور پر
+                    today.setMonth(today.getMonth() - 1);
+                    reportMonthInput.value = today.toISOString().substring(0, 7);
+                }
+            }
+        }
+
+        function showMessage(message, type = 'success') {
+            const messageArea = document.getElementById('message-area');
+            messageArea.innerHTML = `<div class="message message-${type}">${message}</div>`;
+            // 3 سیکنڈ بعد پیغام ہٹا دیں
+            setTimeout(() => {
+                messageArea.innerHTML = '';
+            }, 3000);
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+             // تاریخ کو پاکستانی فارمیٹ DD/MM/YYYY میں دکھائیں
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // مہینے 0 سے شروع ہوتے ہیں
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+         function formatAmount(amount) {
+            return parseFloat(amount).toLocaleString('en-PK', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function hideForms() {
+             document.getElementById('add-edit-forms').style.display = 'none';
+             document.getElementById('utility-bill-form-section').style.display = 'none';
+             document.getElementById('monthly-expense-form-section').style.display = 'none';
+             document.getElementById('donation-form-section').style.display = 'none';
+        }
+
+        function showAddForm(type) {
+            hideForms(); // پہلے تمام فارم چھپائیں
+            document.getElementById('add-edit-forms').style.display = 'block';
+            let formId, formTitleId, formSectionId, formElement;
+
+            if (type === 'utility-bill') {
+                formId = 'utility-bill-form';
+                formTitleId = 'utility-bill-form-title';
+                formSectionId = 'utility-bill-form-section';
+                formElement = document.getElementById(formId);
+                formElement.reset(); // فارم ری سیٹ کریں
+                document.getElementById('utility-bill-id').value = ''; // ID خالی کریں
+                document.getElementById(formTitleId).innerText = 'نیا یوٹیلیٹی بل شامل کریں';
+                // تاریخ آج کی سیٹ کریں
+                document.getElementById('utility-bill-date').valueAsDate = new Date();
+            } else if (type === 'monthly-expense') {
+                formId = 'monthly-expense-form';
+                formTitleId = 'monthly-expense-form-title';
+                formSectionId = 'monthly-expense-form-section';
+                 formElement = document.getElementById(formId);
+                formElement.reset();
+                document.getElementById('monthly-expense-id').value = '';
+                document.getElementById(formTitleId).innerText = 'نیا ماہانہ خرچہ شامل کریں';
+                document.getElementById('monthly-expense-date').valueAsDate = new Date();
+            } else if (type === 'donation') {
+                formId = 'donation-form';
+                formTitleId = 'donation-form-title';
+                formSectionId = 'donation-form-section';
+                 formElement = document.getElementById(formId);
+                formElement.reset();
+                document.getElementById('donation-id').value = '';
+                document.getElementById(formTitleId).innerText = 'نیا عطیہ شامل کریں';
+                 document.getElementById('donation-date').valueAsDate = new Date();
+            }
+
+            if (formSectionId) {
+                document.getElementById(formSectionId).style.display = 'block';
+                // فارم پر فوکس کریں
+                const firstInput = document.getElementById(formSectionId).querySelector('input, select, textarea');
+                if(firstInput) firstInput.focus();
+            }
+        }
+
+        function quickAdd(targetTabId) {
+            // پہلے متعلقہ ٹیب پر جائیں
+            const targetButton = document.querySelector(`.tab-button[onclick*="'${targetTabId}'"]`);
+            if (targetButton) {
+                targetButton.click(); // ٹیب کھولنے کے لئے کلک کریں
+                 // تھوڑی دیر بعد فارم دکھائیں تاکہ ٹیب کھلنے کا وقت ملے
+                 setTimeout(() => {
+                    if (targetTabId === 'utility-bills-tab') showAddForm('utility-bill');
+                    else if (targetTabId === 'monthly-expenses-tab') showAddForm('monthly-expense');
+                    else if (targetTabId === 'donations-tab') showAddForm('donation');
+                 }, 100);
+            }
+        }
+
+        function resetFilters(tabId) {
+            const filters = document.getElementById(tabId).querySelectorAll('.filter-section input, .filter-section select');
+            filters.forEach(input => {
+                if (input.type === 'month' || input.type === 'text') {
+                    input.value = '';
+                } else if (input.tagName === 'SELECT') {
+                    input.selectedIndex = 0;
+                }
+            });
+        }
+
+        // --- ڈیٹا لوڈنگ فنکشنز ---
+
+        async function loadUtilityBills() {
+            try {
+                const monthFilter = document.getElementById('filter-bill-month').value; // YYYY-MM
+                const typeFilter = document.getElementById('filter-bill-type').value;
+                const statusFilter = document.getElementById('filter-bill-status').value;
+
+                const filters = {};
+                if (monthFilter) filters.monthYear = monthFilter;
+                if (typeFilter) filters.type = typeFilter;
+                if (statusFilter) filters.status = statusFilter;
+
+                const bills = await getFilteredRecords(STORES.utilityBills, filters);
+                const tbody = document.getElementById('utility-bills-tbody');
+                const totalElement = document.getElementById('utility-bills-total');
+                tbody.innerHTML = ''; // ٹیبل صاف کریں
+                let totalAmount = 0;
+
+                // تاریخ کے مطابق نزولی ترتیب میں
+                bills.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                if (bills.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">کوئی ریکارڈ موجود نہیں۔</td></tr>';
+                     totalElement.textContent = formatAmount(0);
+                    return;
+                }
+
+                bills.forEach(bill => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${formatDate(bill.date)}</td>
+                        <td>${bill.type}</td>
+                        <td>${formatAmount(bill.amount)}</td>
+                        <td>${formatDate(bill.dueDate)}</td>
+                        <td>${bill.meterReading || '-'}</td>
+                        <td>${bill.status}</td>
+                        <td>${bill.notes || '-'}</td>
+                        <td class="action-buttons print-hide">
+                            <button class="button" onclick="editUtilityBill(${bill.id})">ترمیم</button>
+                            <button class="button button-danger" onclick="deleteUtilityBill(${bill.id})">حذف</button>
+                        </td>
+                    `;
+                    totalAmount += parseFloat(bill.amount);
+                });
+                 totalElement.textContent = formatAmount(totalAmount);
+
+            } catch (error) {
+                console.error("Error loading utility bills:", error);
+                showMessage("یوٹیلیٹی بل لوڈ کرنے میں خرابی!", "error");
+            }
+        }
+
+        async function loadMonthlyExpenses() {
+             try {
+                const monthFilter = document.getElementById('filter-expense-month').value; // YYYY-MM
+                const categoryFilter = document.getElementById('filter-expense-category').value;
+
+                const filters = {};
+                if (monthFilter) filters.monthYear = monthFilter;
+                if (categoryFilter) filters.category = categoryFilter;
+
+                const expenses = await getFilteredRecords(STORES.monthlyExpenses, filters);
+                const tbody = document.getElementById('monthly-expenses-tbody');
+                const totalElement = document.getElementById('monthly-expenses-total');
+                tbody.innerHTML = '';
+                let totalAmount = 0;
+
+                 // تاریخ کے مطابق نزولی ترتیب میں
+                expenses.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                 if (expenses.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">کوئی ریکارڈ موجود نہیں۔</td></tr>';
+                     totalElement.textContent = formatAmount(0);
+                    return;
+                }
+
+                expenses.forEach(expense => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${formatDate(expense.date)}</td>
+                        <td>${expense.category}</td>
+                        <td>${expense.description}</td>
+                        <td>${formatAmount(expense.amount)}</td>
+                        <td class="action-buttons print-hide">
+                            <button class="button" onclick="editMonthlyExpense(${expense.id})">ترمیم</button>
+                            <button class="button button-danger" onclick="deleteMonthlyExpense(${expense.id})">حذف</button>
+                        </td>
+                    `;
+                     totalAmount += parseFloat(expense.amount);
+                });
+                 totalElement.textContent = formatAmount(totalAmount);
+
+            } catch (error) {
+                console.error("Error loading monthly expenses:", error);
+                showMessage("ماہانہ اخراجات لوڈ کرنے میں خرابی!", "error");
+            }
+        }
+
+        async function loadDonations() {
+             try {
+                const monthFilter = document.getElementById('filter-donation-month').value; // YYYY-MM
+                const typeFilter = document.getElementById('filter-donation-type').value;
+                const donorFilter = document.getElementById('filter-donation-donor').value;
+
+                const filters = {};
+                if (monthFilter) filters.monthYear = monthFilter;
+                if (typeFilter) filters.type = typeFilter;
+                if (donorFilter) filters.donorName = donorFilter; // جزوی میچ کے لئے
+
+                const donations = await getFilteredRecords(STORES.donations, filters);
+                const tbody = document.getElementById('donations-tbody');
+                 const totalElement = document.getElementById('donations-total');
+                tbody.innerHTML = '';
+                 let totalAmount = 0;
+
+                 // تاریخ کے مطابق نزولی ترتیب میں
+                donations.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                 if (donations.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">کوئی ریکارڈ موجود نہیں۔</td></tr>';
+                     totalElement.textContent = formatAmount(0);
+                    return;
+                }
+
+                donations.forEach(donation => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${formatDate(donation.date)}</td>
+                        <td>${donation.type}</td>
+                        <td>${formatAmount(donation.amount)}</td>
+                        <td>${donation.donorName || '-'}</td>
+                        <td>${donation.receiptNo || '-'}</td>
+                        <td>${donation.notes || '-'}</td>
+                        <td class="action-buttons print-hide">
+                            <button class="button" onclick="editDonation(${donation.id})">ترمیم</button>
+                            <button class="button button-danger" onclick="deleteDonation(${donation.id})">حذف</button>
+                        </td>
+                    `;
+                    totalAmount += parseFloat(donation.amount);
+                });
+                 totalElement.textContent = formatAmount(totalAmount);
+
+            } catch (error) {
+                console.error("Error loading donations:", error);
+                showMessage("عطیات لوڈ کرنے میں خرابی!", "error");
+            }
+        }
+
+         async function loadDashboardSummary() {
+            const summaryDiv = document.getElementById('dashboard-summary');
+            summaryDiv.innerHTML = '<p>خلاصہ لوڈ ہو رہا ہے...</p>';
+            try {
+                const today = new Date();
+                const currentMonthYear = today.toISOString().substring(0, 7); // YYYY-MM
+
+                // موجودہ مہینے کے عطیات
+                const currentMonthDonations = await getFilteredRecords(STORES.donations, { monthYear: currentMonthYear });
+                const totalDonations = currentMonthDonations.reduce((sum, d) => sum + parseFloat(d.amount), 0);
+
+                // موجودہ مہینے کے اخراجات (بل + ماہانہ)
+                const currentMonthBills = await getFilteredRecords(STORES.utilityBills, { monthYear: currentMonthYear });
+                const totalBills = currentMonthBills.reduce((sum, b) => sum + parseFloat(b.amount), 0);
+
+                const currentMonthExpenses = await getFilteredRecords(STORES.monthlyExpenses, { monthYear: currentMonthYear });
+                const totalMonthlyExpenses = currentMonthExpenses.reduce((sum, e) => sum + parseFloat(e.amount), 0);
+
+                const totalExpenses = totalBills + totalMonthlyExpenses;
+                const balance = totalDonations - totalExpenses;
+
+                // ادا نہ ہونے والے بل
+                 const unpaidBills = await getFilteredRecords(STORES.utilityBills, { status: 'ادا نہیں ہوا' });
+                 const unpaidCount = unpaidBills.length;
+                 const nearestDueDateBill = unpaidBills.sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate))[0];
+
+                summaryDiv.innerHTML = `
+                    <h4>${getMonthYearUrdu(currentMonthYear)} کا خلاصہ</h4>
+                    <p>کل آمدن (عطیات): <strong>${formatAmount(totalDonations)} روپے</strong></p>
+                    <p>کل اخراجات (بل + دیگر): <strong>${formatAmount(totalExpenses)} روپے</strong></p>
+                    <p>بیلنس: <strong style="color: ${balance >= 0 ? 'green' : 'red'};">${formatAmount(balance)} روپے</strong></p>
+                    <hr style="border-top: 1px dashed var(--border-color); margin: 15px 0;">
+                    <h4>اہم اطلاعات</h4>
+                    <p>کل واجب الادا بل: <strong>${unpaidCount}</strong></p>
+                    ${nearestDueDateBill ? `<p>اگلا بل ادا کرنے کی تاریخ (${nearestDueDateBill.type}): <strong>${formatDate(nearestDueDateBill.dueDate)}</strong> (رقم: ${formatAmount(nearestDueDateBill.amount)})</p>` : '<p>کوئی بل واجب الادا نہیں۔</p>'}
+                `;
+
+            } catch (error) {
+                console.error("Error loading dashboard summary:", error);
+                summaryDiv.innerHTML = '<p style="color: red;">ڈیش بورڈ خلاصہ لوڈ کرنے میں خرابی۔</p>';
+            }
+        }
+
+        // --- فارم ہینڈلنگ ---
+
+        // یوٹیلیٹی بل فارم جمع کروانا
+        document.getElementById('utility-bill-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const id = document.getElementById('utility-bill-id').value;
+            const record = {
+                type: document.getElementById('utility-bill-type').value,
+                date: document.getElementById('utility-bill-date').value,
+                dueDate: document.getElementById('utility-bill-due-date').value,
+                amount: parseFloat(document.getElementById('utility-bill-amount').value),
+                meterReading: document.getElementById('utility-bill-meter-reading').value,
+                status: document.getElementById('utility-bill-status').value,
+                notes: document.getElementById('utility-bill-notes').value,
+            };
+
+            try {
+                if (id) {
+                    // ترمیم
+                    record.id = parseInt(id);
+                    await updateRecord(STORES.utilityBills, record);
+                    showMessage("یوٹیلیٹی بل کامیابی سے ترمیم ہو گیا۔");
+                } else {
+                    // نیا شامل کریں
+                    await addRecord(STORES.utilityBills, record);
+                    showMessage("یوٹیلیٹی بل کامیابی سے شامل ہو گیا۔");
+                }
+                hideForms();
+                loadUtilityBills(); // ٹیبل ریفریش کریں
+                loadDashboardSummary(); // ڈیش بورڈ اپ ڈیٹ کریں
+            } catch (error) {
+                console.error("Error saving utility bill:", error);
+                showMessage("یوٹیلیٹی بل محفوظ کرنے میں خرابی!", "error");
+            }
+        });
+
+        // ماہانہ اخراجات فارم جمع کروانا
+        document.getElementById('monthly-expense-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const id = document.getElementById('monthly-expense-id').value;
+            const record = {
+                category: document.getElementById('monthly-expense-category').value,
+                date: document.getElementById('monthly-expense-date').value,
+                amount: parseFloat(document.getElementById('monthly-expense-amount').value),
+                description: document.getElementById('monthly-expense-description').value,
+            };
+
+            try {
+                if (id) {
+                    // ترمیم
+                    record.id = parseInt(id);
+                    await updateRecord(STORES.monthlyExpenses, record);
+                    showMessage("ماہانہ خرچہ کامیابی سے ترمیم ہو گیا۔");
+                } else {
+                    // نیا شامل کریں
+                    await addRecord(STORES.monthlyExpenses, record);
+                    showMessage("ماہانہ خرچہ کامیابی سے شامل ہو گیا۔");
+                }
+                hideForms();
+                loadMonthlyExpenses(); // ٹیبل ریفریش کریں
+                loadDashboardSummary(); // ڈیش بورڈ اپ ڈیٹ کریں
+            } catch (error) {
+                console.error("Error saving monthly expense:", error);
+                showMessage("ماہانہ خرچہ محفوظ کرنے میں خرابی!", "error");
+            }
+        });
+
+         // عطیات فارم جمع کروانا
+        document.getElementById('donation-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const id = document.getElementById('donation-id').value;
+            const record = {
+                type: document.getElementById('donation-type').value,
+                date: document.getElementById('donation-date').value,
+                amount: parseFloat(document.getElementById('donation-amount').value),
+                donorName: document.getElementById('donation-donor-name').value,
+                receiptNo: document.getElementById('donation-receipt-no').value,
+                notes: document.getElementById('donation-notes').value,
+            };
+
+            try {
+                if (id) {
+                    // ترمیم
+                    record.id = parseInt(id);
+                    await updateRecord(STORES.donations, record);
+                    showMessage("عطیہ کامیابی سے ترمیم ہو گیا۔");
+                } else {
+                    // نیا شامل کریں
+                    await addRecord(STORES.donations, record);
+                    showMessage("عطیہ کامیابی سے شامل ہو گیا۔");
+                }
+                hideForms();
+                loadDonations(); // ٹیبل ریفریش کریں
+                 loadDashboardSummary(); // ڈیش بورڈ اپ ڈیٹ کریں
+            } catch (error) {
+                console.error("Error saving donation:", error);
+                showMessage("عطیہ محفوظ کرنے میں خرابی!", "error");
+            }
+        });
+
+
+        // --- ترمیم فنکشنز ---
+        async function editUtilityBill(id) {
+            try {
+                const record = await getRecord(STORES.utilityBills, id);
+                if (!record) throw new Error("Record not found");
+
+                showAddForm('utility-bill'); // فارم دکھائیں
+                document.getElementById('utility-bill-form-title').innerText = 'یوٹیلیٹی بل میں ترمیم کریں';
+                document.getElementById('utility-bill-id').value = record.id;
+                document.getElementById('utility-bill-type').value = record.type;
+                document.getElementById('utility-bill-date').value = record.date;
+                document.getElementById('utility-bill-due-date').value = record.dueDate;
+                document.getElementById('utility-bill-amount').value = record.amount;
+                document.getElementById('utility-bill-meter-reading').value = record.meterReading;
+                document.getElementById('utility-bill-status').value = record.status;
+                document.getElementById('utility-bill-notes').value = record.notes;
+
+                 // فارم سیکشن تک سکرول کریں
+                document.getElementById('utility-bill-form-section').scrollIntoView({ behavior: 'smooth' });
+
+            } catch (error) {
+                 console.error("Error fetching utility bill for edit:", error);
+                 showMessage("ترمیم کے لئے بل لوڈ کرنے میں خرابی!", "error");
+            }
+        }
+
+        async function editMonthlyExpense(id) {
+             try {
+                const record = await getRecord(STORES.monthlyExpenses, id);
+                if (!record) throw new Error("Record not found");
+
+                showAddForm('monthly-expense');
+                document.getElementById('monthly-expense-form-title').innerText = 'ماہانہ خرچے میں ترمیم کریں';
+                document.getElementById('monthly-expense-id').value = record.id;
+                document.getElementById('monthly-expense-category').value = record.category;
+                document.getElementById('monthly-expense-date').value = record.date;
+                document.getElementById('monthly-expense-amount').value = record.amount;
+                document.getElementById('monthly-expense-description').value = record.description;
+
+                document.getElementById('monthly-expense-form-section').scrollIntoView({ behavior: 'smooth' });
+
+            } catch (error) {
+                 console.error("Error fetching monthly expense for edit:", error);
+                 showMessage("ترمیم کے لئے خرچہ لوڈ کرنے میں خرابی!", "error");
+            }
+        }
+
+        async function editDonation(id) {
+            try {
+                const record = await getRecord(STORES.donations, id);
+                if (!record) throw new Error("Record not found");
+
+                showAddForm('donation');
+                document.getElementById('donation-form-title').innerText = 'عطیہ میں ترمیم کریں';
+                document.getElementById('donation-id').value = record.id;
+                document.getElementById('donation-type').value = record.type;
+                document.getElementById('donation-date').value = record.date;
+                document.getElementById('donation-amount').value = record.amount;
+                document.getElementById('donation-donor-name').value = record.donorName;
+                document.getElementById('donation-receipt-no').value = record.receiptNo;
+                document.getElementById('donation-notes').value = record.notes;
+
+                document.getElementById('donation-form-section').scrollIntoView({ behavior: 'smooth' });
+
+            } catch (error) {
+                 console.error("Error fetching donation for edit:", error);
+                 showMessage("ترمیم کے لئے عطیہ لوڈ کرنے میں خرابی!", "error");
+            }
+        }
+
+        // --- حذف فنکشنز ---
+        async function deleteUtilityBill(id) {
+            if (confirm("کیا آپ واقعی اس یوٹیلیٹی بل کو حذف کرنا چاہتے ہیں؟")) {
+                try {
+                    await deleteRecord(STORES.utilityBills, id);
+                    showMessage("یوٹیلیٹی بل کامیابی سے حذف ہو گیا۔");
+                    loadUtilityBills(); // ٹیبل ریفریش کریں
+                    loadDashboardSummary(); // ڈیش بورڈ اپ ڈیٹ کریں
+                } catch (error) {
+                    console.error("Error deleting utility bill:", error);
+                    showMessage("یوٹیلیٹی بل حذف کرنے میں خرابی!", "error");
+                }
+            }
+        }
+
+        async function deleteMonthlyExpense(id) {
+            if (confirm("کیا آپ واقعی اس ماہانہ خرچے کو حذف کرنا چاہتے ہیں؟")) {
+                try {
+                    await deleteRecord(STORES.monthlyExpenses, id);
+                    showMessage("ماہانہ خرچہ کامیابی سے حذف ہو گیا۔");
+                    loadMonthlyExpenses(); // ٹیبل ریفریش کریں
+                    loadDashboardSummary(); // ڈیش بورڈ اپ ڈیٹ کریں
+                } catch (error) {
+                    console.error("Error deleting monthly expense:", error);
+                    showMessage("ماہانہ خرچہ حذف کرنے میں خرابی!", "error");
+                }
+            }
+        }
+
+        async function deleteDonation(id) {
+             if (confirm("کیا آپ واقعی اس عطیہ کو حذف کرنا چاہتے ہیں؟")) {
+                try {
+                    await deleteRecord(STORES.donations, id);
+                    showMessage("عطیہ کامیابی سے حذف ہو گیا۔");
+                    loadDonations(); // ٹیبل ریفریش کریں
+                    loadDashboardSummary(); // ڈیش بورڈ اپ ڈیٹ کریں
+                } catch (error) {
+                    console.error("Error deleting donation:", error);
+                    showMessage("عطیہ حذف کرنے میں خرابی!", "error");
+                }
+            }
+        }
+
+        // --- رپورٹنگ فنکشنز ---
+
+        // مہینے اور سال کو اردو میں تبدیل کریں
+        function getMonthYearUrdu(monthYear) { // YYYY-MM
+            const [year, month] = monthYear.split('-');
+            const monthNamesUrdu = ["جنوری", "فروری", "مارچ", "اپریل", "مئی", "جون", "جولائی", "اگست", "ستمبر", "اکتوبر", "نومبر", "دسمبر"];
+            return `${monthNamesUrdu[parseInt(month) - 1]} ${year}`;
+        }
+
+        async function generateReport() {
+            const reportMonth = document.getElementById('report-month').value;
+            const reportOutput = document.getElementById('report-output');
+
+            if (!reportMonth) {
+                reportOutput.innerHTML = '<p style="color: red; text-align:center;">براہ کرم رپورٹ بنانے کے لئے مہینہ منتخب کریں۔</p>';
+                return;
+            }
+
+            reportOutput.innerHTML = '<p style="text-align:center;">رپورٹ تیار کی جا رہی ہے...</p>';
+
+            try {
+                // 1. عطیات حاصل کریں
+                const donations = await getFilteredRecords(STORES.donations, { monthYear: reportMonth });
+                const totalDonations = donations.reduce((sum, d) => sum + parseFloat(d.amount), 0);
+
+                // 2. یوٹیلیٹی بل حاصل کریں
+                const bills = await getFilteredRecords(STORES.utilityBills, { monthYear: reportMonth });
+                const totalBills = bills.reduce((sum, b) => sum + parseFloat(b.amount), 0);
+
+                // 3. ماہانہ اخراجات حاصل کریں
+                const monthlyExpenses = await getFilteredRecords(STORES.monthlyExpenses, { monthYear: reportMonth });
+                const totalMonthlyExpenses = monthlyExpenses.reduce((sum, e) => sum + parseFloat(e.amount), 0);
+
+                const totalExpenses = totalBills + totalMonthlyExpenses;
+                const balance = totalDonations - totalExpenses;
+
+                // رپورٹ HTML بنائیں
+                let reportHTML = `
+                    <h3>ماہانہ مالیاتی رپورٹ - ${getMonthYearUrdu(reportMonth)}</h3>
+
+                    <h4>آمدن (عطیات)</h4>
+                `;
+                if (donations.length > 0) {
+                    reportHTML += `
+                        <table>
+                            <thead>
+                                <tr><th>تاریخ</th><th>قسم</th><th>عطیہ دہندہ</th><th>رقم (روپے)</th></tr>
+                            </thead>
+                            <tbody>
+                                ${donations.sort((a, b) => new Date(a.date) - new Date(b.date)).map(d => `
+                                    <tr>
+                                        <td>${formatDate(d.date)}</td>
+                                        <td>${d.type}</td>
+                                        <td>${d.donorName || '-'}</td>
+                                        <td>${formatAmount(d.amount)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                            <tfoot>
+                                <tr><td colspan="3"><b>کل آمدن:</b></td><td><b>${formatAmount(totalDonations)}</b></td></tr>
+                            </tfoot>
+                        </table>
+                    `;
+                } else {
+                     reportHTML += '<p>اس مہینے کوئی عطیات موصول نہیں ہوئے۔</p>';
+                }
+
+                reportHTML += `<h4>اخراجات</h4>`;
+
+                // یوٹیلیٹی بلز کا سیکشن
+                 reportHTML += `<h5>یوٹیلیٹی بل</h5>`;
+                 if (bills.length > 0) {
+                     reportHTML += `
+                        <table>
+                            <thead>
+                                <tr><th>تاریخ</th><th>قسم</th><th>حالت</th><th>رقم (روپے)</th></tr>
+                            </thead>
+                            <tbody>
+                                ${bills.sort((a, b) => new Date(a.date) - new Date(b.date)).map(b => `
+                                    <tr>
+                                        <td>${formatDate(b.date)}</td>
+                                        <td>${b.type}</td>
+                                        <td>${b.status}</td>
+                                        <td>${formatAmount(b.amount)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                             <tfoot>
+                                <tr><td colspan="3"><b>کل بل:</b></td><td><b>${formatAmount(totalBills)}</b></td></tr>
+                            </tfoot>
+                        </table>
+                    `;
+                 } else {
+                      reportHTML += '<p>اس مہینے کوئی یوٹیلیٹی بل نہیں۔</p>';
+                 }
+
+                 // ماہانہ اخراجات کا سیکشن
+                 reportHTML += `<h5>دیگر ماہانہ اخراجات</h5>`;
+                  if (monthlyExpenses.length > 0) {
+                     reportHTML += `
+                        <table>
+                            <thead>
+                                <tr><th>تاریخ</th><th>قسم</th><th>تفصیل</th><th>رقم (روپے)</th></tr>
+                            </thead>
+                            <tbody>
+                                ${monthlyExpenses.sort((a, b) => new Date(a.date) - new Date(b.date)).map(e => `
+                                    <tr>
+                                        <td>${formatDate(e.date)}</td>
+                                        <td>${e.category}</td>
+                                        <td>${e.description}</td>
+                                        <td>${formatAmount(e.amount)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                             <tfoot>
+                                <tr><td colspan="3"><b>کل ماہانہ اخراجات:</b></td><td><b>${formatAmount(totalMonthlyExpenses)}</b></td></tr>
+                            </tfoot>
+                        </table>
+                    `;
+                 } else {
+                      reportHTML += '<p>اس مہینے کوئی دیگر ماہانہ اخراجات نہیں۔</p>';
+                 }
+
+
+                // خلاصہ
+                reportHTML += `
+                    <div class="report-summary">
+                        <h4>خلاصہ برائے ${getMonthYearUrdu(reportMonth)}</h4>
+                        <p><span>کل آمدن:</span> <span>${formatAmount(totalDonations)} روپے</span></p>
+                        <p><span>کل اخراجات:</span> <span>${formatAmount(totalExpenses)} روپے</span></p>
+                        <hr style="border: none; border-top: 1px solid #ccc; margin: 5px 0;">
+                        <p><span>بیلنس:</span> <span style="font-weight: bold; color: ${balance >= 0 ? 'green' : 'red'};">${formatAmount(balance)} روپے</span></p>
+                    </div>
+                    <p style="text-align: center; font-size: 0.8em; margin-top: 30px;">یہ رپورٹ کمپیوٹر سے تیار کی گئی ہے۔</p>
+                `;
+
+                reportOutput.innerHTML = reportHTML;
+
+            } catch (error) {
+                console.error("Error generating report:", error);
+                reportOutput.innerHTML = '<p style="color: red; text-align:center;">رپورٹ بنانے میں خرابی!</p>';
+            }
+        }
+
+        function printReport() {
+            const reportContent = document.getElementById('report-output').innerHTML;
+            if (!reportContent || reportContent.includes('منتخب کریں') || reportContent.includes('تیار کی جا رہی ہے')) {
+                 showMessage("پرنٹ کرنے سے پہلے براہ کرم ایک رپورٹ بنائیں۔", "error");
+                 return;
+            }
+            window.print();
+        }
+
+
+        // --- بیک اپ اور ری اسٹور ---
+        async function backupData() {
+            try {
+                const backupObject = {};
+                for (const storeName of Object.values(STORES)) {
+                    backupObject[storeName] = await getAllRecords(storeName);
+                }
+
+                const jsonString = JSON.stringify(backupObject, null, 2); // Pretty print JSON
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = url;
+                const date = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+                a.download = `masjid_finance_backup_${date}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                showMessage("ڈیٹا بیک اپ کامیابی سے ڈاؤنلوڈ ہو گیا۔");
+
+            } catch (error) {
+                console.error("Error backing up data:", error);
+                showMessage("ڈیٹا بیک اپ کرنے میں خرابی!", "error");
+            }
+        }
+
+        function restoreData() {
+            const fileInput = document.getElementById('restore-file-input');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                showMessage("براہ کرم ری اسٹور کرنے کے لئے ایک بیک اپ فائل منتخب کریں۔", "error");
+                return;
+            }
+
+            if (!confirm("کیا آپ واقعی ڈیٹا ری اسٹور کرنا چاہتے ہیں؟ موجودہ تمام ڈیٹا حذف ہو جائے گا۔ یہ عمل ناقابل واپسی ہے۔")) {
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                try {
+                    const backupObject = JSON.parse(event.target.result);
+
+                    // 1. ڈیٹا بیس صاف کریں
+                    await clearAllStores();
+
+                    // 2. نیا ڈیٹا ڈالیں
+                    const transaction = db.transaction(Object.values(STORES), 'readwrite');
+                    let storesCompleted = 0;
+                    const totalStores = Object.keys(backupObject).length;
+
+                    for (const storeName in backupObject) {
+                        if (Object.values(STORES).includes(storeName) && Array.isArray(backupObject[storeName])) {
+                            const store = transaction.objectStore(storeName);
+                            backupObject[storeName].forEach(record => {
+                                // پرانی ID ہٹا دیں تاکہ autoIncrement کام کرے
+                                delete record.id;
+                                // monthYear دوبارہ بنائیں
+                                if (record.date) {
+                                     record.monthYear = record.date.substring(0, 7);
+                                }
+                                store.add(record);
+                            });
+                        }
+                    }
+
+                    transaction.oncomplete = () => {
+                        showMessage("ڈیٹا کامیابی سے ری اسٹور ہو گیا۔ تمام ٹیبز ریفریش ہو رہے ہیں۔");
+                        // تمام ٹیبلز اور ڈیش بورڈ ری لوڈ کریں
+                        loadAllData();
+                        fileInput.value = ''; // فائل ان پٹ صاف کریں
+                    };
+
+                    transaction.onerror = (event) => {
+                         console.error("Error during restore transaction:", event.target.error);
+                         showMessage("ڈیٹا ری اسٹور کرنے کے دوران خرابی!", "error");
+                    };
+
+                } catch (error) {
+                    console.error("Error restoring data:", error);
+                    showMessage("ڈیٹا ری اسٹور کرنے میں خرابی! یقینی بنائیں کہ فائل درست JSON فارمیٹ میں ہے۔", "error");
+                }
+            };
+
+            reader.onerror = () => {
+                 showMessage("بیک اپ فائل پڑھنے میں خرابی!", "error");
+            };
+
+            reader.readAsText(file);
+        }
+
+        function clearAllStores() {
+             return new Promise((resolve, reject) => {
+                if (!db) { reject("Database not open"); return; }
+                 const transaction = db.transaction(Object.values(STORES), 'readwrite');
+                 let storesCleared = 0;
+                 const totalStores = Object.values(STORES).length;
+
+                 Object.values(STORES).forEach(storeName => {
+                    const store = transaction.objectStore(storeName);
+                    const request = store.clear();
+                    request.onsuccess = () => {
+                        storesCleared++;
+                        if (storesCleared === totalStores) {
+                             console.log("All stores cleared.");
+                        }
+                    };
+                     request.onerror = (event) => {
+                         console.error(`Error clearing store ${storeName}:`, event.target.error);
+                         // اگر ایک اسٹور صاف کرنے میں ناکام ہو تو بھی کوشش جاری رکھیں
+                     };
+                 });
+
+                 transaction.oncomplete = () => resolve();
+                 transaction.onerror = (event) => reject("Error clearing stores: " + event.target.error);
+             });
+        }
+
+         async function deleteAllData() {
+             if (confirm("انتباہ: کیا آپ واقعی تمام مالیاتی ریکارڈ مستقل طور پر حذف کرنا چاہتے ہیں؟ یہ عمل ناقابل واپسی ہے۔")) {
+                 if (confirm("یقینی ہیں؟ تمام ڈیٹا ہمیشہ کے لئے ختم ہو جائے گا۔")) {
+                     try {
+                         await clearAllStores();
+                         showMessage("تمام ڈیٹا کامیابی سے حذف کر دیا گیا۔");
+                         loadAllData(); // تمام ٹیبلز اور ڈیش بورڈ ریفریش کریں
+                     } catch (error) {
+                         console.error("Error deleting all data:", error);
+                         showMessage("تمام ڈیٹا حذف کرنے میں خرابی!", "error");
+                     }
+                 }
+             }
+         }
+
+
+        // --- ایپ کا آغاز ---
+         function loadAllData() {
+             loadUtilityBills();
+             loadMonthlyExpenses();
+             loadDonations();
+             loadDashboardSummary();
+             // اگر رپورٹس ٹیب فعال ہے تو رپورٹ دوبارہ بنائیں
+             if (document.getElementById('reports-tab').classList.contains('active')) {
+                 const reportMonthInput = document.getElementById('report-month');
+                 if (reportMonthInput.value) {
+                     generateReport();
+                 } else {
+                     document.getElementById('report-output').innerHTML = '<p style="text-align: center;">براہ کرم رپورٹ بنانے کے لئے مہینہ منتخب کریں۔</p>';
+                 }
+             }
+         }
+
+        // جب صفحہ لوڈ ہو تو ڈیٹا بیس کھولیں اور ڈیٹا لوڈ کریں
+        window.onload = async () => {
+            try {
+                await openDatabase();
+                loadAllData(); // تمام ٹیبز کا ڈیٹا لوڈ کریں
+                // پہلے ٹیب کو فعال کریں (ڈیش بورڈ)
+                document.querySelector('.tab-button').click();
+            } catch (error) {
+                console.error("Initialization error:", error);
+                 showMessage("ایپلی کیشن شروع کرنے میں خرابی!", "error");
+                 // بنیادی فعالیت کے بغیر ایپ کو غیر فعال کریں؟
+                 const container = document.querySelector('.container');
+                 if (container) {
+                     container.innerHTML = `<h1>خرابی</h1><p>ڈیٹا بیس لوڈ نہیں ہو سکا۔ براہ کرم صفحہ ریفریش کریں یا براؤزر تبدیل کر کے دیکھیں۔</p><p style="color:red;">${error}</p>`;
+                 }
+            }
+        };
+
+    </script>
+
+</body>
+</html>
